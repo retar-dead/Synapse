@@ -1,25 +1,29 @@
-# Synapse
+<p align="center">
+  <img src="images/oxide.png" width="400" alt="Oxide Logo">
+</p>
 
-![Preview](/images/image2.png)
+<h1 align="center">Oxide Client</h1>
 
-Based on **`Myau-250910`**, with added features and improvements not found in the original, focused on expanding and refining the original Myau client.
+<p align="center">
+  <b>The best client for prediction anti-cheat</b><br>
+  Developed to must of the brazilians servers out there (low budget prediction/anti-cheat)
+</p>
 
-## Changes
+---
 
-* ?
+## About the project
 
-If you encounter an issue or have a feature suggestion, please fuck yourself
+The **Oxide Client** is one of the only minecraft clients that are fully skidded.
 
-## Building
+The main goal of this is:
 
-```bash
-./gradlew build
-```
+- bypass some ass random anti-cheat
+- make a fun client having fun together doing it! :D
 
-## Contributing
+---
 
-You can open an issue or fuck yourself.
+## Download
 
-If you’re interested in co-developing or have questions, feel free to reach out:
-
-NIGGER
+1. Download jar archive from releases or Discord
+2. Put in the mods folder
+3. Get fun cheating :)
