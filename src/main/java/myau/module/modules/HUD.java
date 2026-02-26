@@ -29,7 +29,7 @@ public class HUD extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private List<Module> activeModules = new ArrayList<>();
     public final ModeProperty colorMode = new ModeProperty(
-            "color", 3, new String[]{"RAINBOW", "CHROMA", "ASTOLFO", "CUSTOM1", "CUSTOM12", "CUSTOM123"}
+            "color", 3, new String[]{"RAINBOW", "CHROMA", "ASTOLFO", "CUSTOM1", "CUSTOM12", "CUSTOM123", "PEARCY", "CRIMSON", "ROYAL", "LAVANDER" }
     );
     public final FloatProperty colorSpeed = new FloatProperty("color-speed", 1.0F, 0.5F, 1.5F);
     public final PercentProperty colorSaturation = new PercentProperty("color-saturation", 50);
@@ -134,6 +134,30 @@ public class HUD extends Module {
                 } else {
                     color = ColorUtil.interpolate((floor - 0.5F) * 2.0F, new Color(this.custom2.getValue()), new Color(this.custom3.getValue()));
                 }
+                break;
+            case 6:
+                double cycle3 = this.getColorCycle(time, offset);
+                color = ColorUtil.interpolate(
+                        (float) (2.0 * Math.abs(cycle3 - Math.floor(cycle3 + 0.5))),
+                        new Color(145, 95, 98),
+                        new Color(110, 68, 70)
+                );
+                break;
+            case 7:
+                double cycle4 = this.getColorCycle(time, offset);
+                color = ColorUtil.interpolate(
+                        (float) (2.0 * Math.abs(cycle4 - Math.floor(cycle4 + 0.5))),
+                        new Color(90, 0, 3),
+                        new Color(122, 27, 31)
+                );
+                break;
+            case 8:
+                double cycle5 = this.getColorCycle(time, offset);
+                color = ColorUtil.interpolate(
+                        (float) (2.0 * Math.abs(cycle5 - Math.floor(cycle5 + 0.5))),
+                        new Color(31, 0, 66),
+                        new Color(255, 94, 0)
+                );
         }
         float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
         return Color.getHSBColor(
