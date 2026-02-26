@@ -2,7 +2,7 @@
   <img src="https://github.com/user-attachments/assets/ff28f9fc-de74-4942-bbbb-30a78274c77a" width="400" alt="Synapse Logo">
 </p>
 
-<h1 align="center">Oxide Client</h1>
+<h1 align="center">Synapse Client</h1>
 
 <p align="center">
   <b>The best client for prediction anti-cheat</b><br>
