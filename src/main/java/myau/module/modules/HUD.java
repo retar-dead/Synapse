@@ -29,7 +29,7 @@ public class HUD extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
     private List<Module> activeModules = new ArrayList<>();
     public final ModeProperty colorMode = new ModeProperty(
-            "color", 3, new String[]{"RAINBOW", "CHROMA", "ASTOLFO", "CUSTOM1", "CUSTOM12", "CUSTOM123", "PEARCY", "CRIMSON", "ROYAL", "LAVANDER", "PAROXIDE" }
+            "color", 3, new String[]{"RAINBOW", "CHROMA", "ASTOLFO", "CUSTOM1", "CUSTOM12", "CUSTOM123", "PEARCY", "CRIMSON", "MEDUSA", "PAROXIDE" }
     );
     public final FloatProperty colorSpeed = new FloatProperty("color-speed", 1.0F, 0.5F, 1.5F);
     public final PercentProperty colorSaturation = new PercentProperty("color-saturation", 50);
@@ -147,8 +147,8 @@ public class HUD extends Module {
                 double cycle4 = this.getColorCycle(time, offset);
                 color = ColorUtil.interpolate(
                         (float) (2.0 * Math.abs(cycle4 - Math.floor(cycle4 + 0.5))),
-                        new Color(90, 0, 3),
-                        new Color(122, 27, 31)
+                        new Color(255, 0, 5),
+                        new Color(188, 44, 49)
                 );
                 break;
             case 8:
@@ -156,7 +156,7 @@ public class HUD extends Module {
                 color = ColorUtil.interpolate(
                         (float) (2.0 * Math.abs(cycle5 - Math.floor(cycle5 + 0.5))),
                         new Color(31, 0, 66),
-                        new Color(255, 94, 0)
+                        new Color(184, 172, 172)
                 );
                 break;
             case 9:

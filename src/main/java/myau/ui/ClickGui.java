@@ -110,7 +110,6 @@ public class ClickGui extends GuiScreen {
         mushModules.add(Myau.moduleManager.getModule(AutoRecraft.class));
         mushModules.add(Myau.moduleManager.getModule(Refill.class));
         mushModules.add(Myau.moduleManager.getModule(ForceSlot.class));
-        mushModules.add(Myau.moduleManager.getModule(TagSpoofer.class));
 
         Comparator<Module> comparator = Comparator.comparing(m -> m.getName().toLowerCase());
         combatModules.sort(comparator);
