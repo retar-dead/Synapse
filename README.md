@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="images/oxide.png" width="400" alt="Oxide Logo">
+  <img src="https://github.com/user-attachments/assets/ff28f9fc-de74-4942-bbbb-30a78274c77a" width="400" alt="Synapse Logo">
 </p>
 
 <h1 align="center">Oxide Client</h1>
@@ -13,7 +13,7 @@
 
 ## About the project
 
-The **Oxide Client** is one of the only minecraft clients that are fully skidded.
+The **Synapse Client** is one of the only minecraft clients that are fully skidded.
 
 The main goal of this is:
 
