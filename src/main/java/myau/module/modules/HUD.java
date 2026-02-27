@@ -47,6 +47,7 @@ public class HUD extends Module {
     public final BooleanProperty shadow = new BooleanProperty("shadow", true);
     public final BooleanProperty suffixes = new BooleanProperty("suffixes", true);
     public final BooleanProperty lowerCase = new BooleanProperty("lower-case", false);
+    public final ModeProperty suffixSeparator = new ModeProperty("suffix-separator", 0, new String[]{"DEFAULT", "-", "( )", "[ ]", "{ }", "< >", "/"});
     public final BooleanProperty chatOutline = new BooleanProperty("chat-outline", true);
     public final BooleanProperty blinkTimer = new BooleanProperty("blink-timer", true);
     public final BooleanProperty toggleSound = new BooleanProperty("toggle-sounds", true);
@@ -79,8 +80,40 @@ public class HUD extends Module {
     private int calculateStringWidth(String string, String[] arr) {
         int width = mc.fontRendererObj.getStringWidth(string);
         if (this.suffixes.getValue()) {
-            for (String str : arr) {
-                width += 3 + mc.fontRendererObj.getStringWidth(str);
+            if (arr.length > 0) {
+                // handle first suffix with separator modes
+                String first = arr[0];
+                int firstWidth = 0;
+                switch (this.suffixSeparator.getValue()) {
+                    case 0: // DEFAULT
+                        firstWidth = 3 + mc.fontRendererObj.getStringWidth(first);
+                        break;
+                    case 1: // - -> " - SUFFIX"
+                        firstWidth = mc.fontRendererObj.getStringWidth(" - ") + mc.fontRendererObj.getStringWidth(first);
+                        break;
+                    case 2: // ( ) -> " ( SUFFIX ) "
+                        firstWidth = mc.fontRendererObj.getStringWidth(" ( ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" )");
+                        break;
+                    case 3: // [ ] -> " [ SUFFIX ] "
+                        firstWidth = mc.fontRendererObj.getStringWidth(" [ ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" ]");
+                        break;
+                    case 4: // { } -> " { SUFFIX } "
+                        firstWidth = mc.fontRendererObj.getStringWidth(" { ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" }");
+                        break;
+                    case 5: // < > -> " < SUFFIX > "
+                        firstWidth = mc.fontRendererObj.getStringWidth(" < ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" >");
+                        break;
+                    case 6: // /
+                        firstWidth = mc.fontRendererObj.getStringWidth(" / ") + mc.fontRendererObj.getStringWidth(first);
+                        break;
+                    default:
+                        firstWidth = 3 + mc.fontRendererObj.getStringWidth(first);
+                }
+                width += firstWidth;
+                // remaining suffixes keep original spacing
+                for (int i = 1; i < arr.length; i++) {
+                    width += 3 + mc.fontRendererObj.getStringWidth(arr[i]);
+                }
             }
         }
         return width;
@@ -156,7 +189,7 @@ public class HUD extends Module {
                 color = ColorUtil.interpolate(
                         (float) (2.0 * Math.abs(cycle5 - Math.floor(cycle5 + 0.5))),
                         new Color(31, 0, 66),
-                        new Color(184, 172, 172)
+                        new Color(218, 204, 204)
                 );
                 break;
             case 9:
@@ -272,25 +305,73 @@ public class HUD extends Module {
                             );
                 }
                 if (this.suffixes.getValue() && moduleSuffix.length > 0) {
-                    float width = (float) mc.fontRendererObj.getStringWidth(moduleName) + 3.0F;
-                    for (String string : moduleSuffix) {
+                    float width = (float) mc.fontRendererObj.getStringWidth(moduleName);
+                    // handle first suffix with separator modes
+                    String first = moduleSuffix[0];
+                    String firstToDraw = first;
+                    switch (this.suffixSeparator.getValue()) {
+                        case 0: // DEFAULT
+                            width += 3.0F;
+                            firstToDraw = first;
+                            break;
+                        case 1: // -
+                            firstToDraw = " - " + first;
+                            break;
+                        case 2: // ( )
+                            firstToDraw = " ( " + first + " ) ";
+                            break;
+                        case 3: // [ ]
+                            firstToDraw = " [ " + first + " ] ";
+                            break;
+                        case 4: // { }
+                            firstToDraw = " { " + first + " } ";
+                            break;
+                        case 5: // < >
+                            firstToDraw = " < " + first + " > ";
+                            break;
+                        case 6: // /
+                            firstToDraw = " / " + first;
+                            break;
+                        default:
+                            width += 3.0F;
+                            firstToDraw = first;
+                    }
+                    // draw first suffix
+                    if (this.shadow.getValue()) {
+                        mc.fontRendererObj.drawStringWithShadow(
+                                firstToDraw,
+                                x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
+                                y / this.scale.getValue(),
+                                ChatColors.GRAY.toAwtColor()
+                        );
+                    } else {
+                        mc.fontRendererObj.drawString(
+                                firstToDraw,
+                                x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
+                                y / this.scale.getValue() + (this.posY.getValue() == 1 ? 1.0F : 0.0F),
+                                ChatColors.GRAY.toAwtColor(),
+                                false
+                        );
+                    }
+                    width += (float) mc.fontRendererObj.getStringWidth(firstToDraw) + (this.shadow.getValue() ? 3.0F : 2.0F);
+                    // draw remaining suffixes (if any) with original spacing
+                    for (int i = 1; i < moduleSuffix.length; i++) {
+                        String string = moduleSuffix[i];
                         if (this.shadow.getValue()) {
-                            mc.fontRendererObj
-                                    .drawStringWithShadow(
-                                            string,
-                                            x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
-                                            y / this.scale.getValue(),
-                                            ChatColors.GRAY.toAwtColor()
-                                    );
+                            mc.fontRendererObj.drawStringWithShadow(
+                                    string,
+                                    x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
+                                    y / this.scale.getValue(),
+                                    ChatColors.GRAY.toAwtColor()
+                            );
                         } else {
-                            mc.fontRendererObj
-                                    .drawString(
-                                            string,
-                                            x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
-                                            y / this.scale.getValue() + (this.posY.getValue() == 1 ? 1.0F : 0.0F),
-                                            ChatColors.GRAY.toAwtColor(),
-                                            false
-                                    );
+                            mc.fontRendererObj.drawString(
+                                    string,
+                                    x / this.scale.getValue() - (this.posX.getValue() == 1 ? totalWidth : 0.0F) + width,
+                                    y / this.scale.getValue() + (this.posY.getValue() == 1 ? 1.0F : 0.0F),
+                                    ChatColors.GRAY.toAwtColor(),
+                                    false
+                            );
                         }
                         width += (float) mc.fontRendererObj.getStringWidth(string) + (this.shadow.getValue() ? 3.0F : 2.0F);
                     }
