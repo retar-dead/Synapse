@@ -13,16 +13,16 @@ import net.minecraft.network.play.client.C0BPacketEntityAction;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 
-public class MoreKB extends Module {
+public class Knockback extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
-    public final ModeProperty mode = new ModeProperty("mode", 0, new String[]{"LEGIT", "LEGIT_FAST", "LESS_PACKET", "PACKET", "DOUBLE_PACKET"});
+    public final ModeProperty mode = new ModeProperty("mode", 0, new String[]{"Legit", "LegitFast", "LessPacket", "FullPacket", "DoublePacket"});
     public final BooleanProperty intelligent = new BooleanProperty("intelligent", false);
     public final BooleanProperty onlyGround = new BooleanProperty("only-ground", true);
     private boolean shouldSprintReset;
     private EntityLivingBase target;
 
-    public MoreKB() {
-        super("MoreKB", false);
+    public Knockback() {
+        super("Knockback", false);
         this.shouldSprintReset = false;
         this.target = null;
     }
@@ -105,6 +105,7 @@ public class MoreKB extends Module {
 
     @Override
     public String[] getSuffix() {
-        return new String[]{this.mode.getValue().toString()};
+        String[] modeNames = new String[]{"Legit", "LegitFast", "LessPacket", "FullPacket", "DoublePacket"};
+        return new String[]{modeNames[this.mode.getValue()]};
     }
 }
