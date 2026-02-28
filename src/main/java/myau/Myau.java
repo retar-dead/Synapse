@@ -36,6 +36,7 @@ public class Myau {
     public static CommandManager commandManager;
     public static net.minecraft.util.ResourceLocation customSkin;
     public static boolean customSkinSlim = false;
+    public static net.minecraft.util.ResourceLocation customCape;
 
     public Myau() {
         this.init();
@@ -78,6 +79,7 @@ public class Myau {
         moduleManager.modules.put(BedTracker.class, new BedTracker());
         moduleManager.modules.put(Blink.class, new Blink());
         moduleManager.modules.put(Chams.class, new Chams());
+        moduleManager.modules.put(Cape.class, new Cape());
         moduleManager.modules.put(ChestESP.class, new ChestESP());
         moduleManager.modules.put(ChestStealer.class, new ChestStealer());
         moduleManager.modules.put(Eagle.class, new Eagle());

@@ -2,6 +2,7 @@ package myau.mixin;
 
 import myau.Myau;
 import myau.module.modules.Sprint;
+import myau.module.modules.Cape;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.Entity;
@@ -56,6 +57,17 @@ public abstract class MixinAbstractClientPlayer extends MixinEntityPlayer {
                 } else {
                     cir.setReturnValue("default");
                 }
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    // Inject to return custom cape for local player
+    @Inject(method = "getLocationCape", at = @At("HEAD"), cancellable = true)
+    private void onGetLocationCape(CallbackInfoReturnable<ResourceLocation> cir) {
+        try {
+            if (Myau.customCape != null && ((Entity) (Object) this) instanceof EntityPlayerSP) {
+                cir.setReturnValue(Myau.customCape);
             }
         } catch (Throwable ignored) {
         }

@@ -105,14 +105,24 @@ public class ClickGui extends GuiScreen {
         miscModules.add(Myau.moduleManager.getModule(InventoryClicker.class));
 
         List<Module> mushModules = new ArrayList<>();
+        Module capeModule = Myau.moduleManager.getModule(Cape.class);
+        System.out.println("[ClickGui] Cape Module: " + capeModule);
+        mushModules.add(capeModule);
         mushModules.add(Myau.moduleManager.getModule(Insults.class));
         mushModules.add(Myau.moduleManager.getModule(Tag.class));
         mushModules.add(Myau.moduleManager.getModule(AutoSoup.class));
         mushModules.add(Myau.moduleManager.getModule(AutoRecraft.class));
         mushModules.add(Myau.moduleManager.getModule(Refill.class));
         mushModules.add(Myau.moduleManager.getModule(ForceSlot.class));
+        mushModules.removeIf(module -> module == null);
 
         Comparator<Module> comparator = Comparator.comparing(m -> m.getName().toLowerCase());
+        combatModules.removeIf(module -> module == null);
+        movementModules.removeIf(module -> module == null);
+        renderModules.removeIf(module -> module == null);
+        playerModules.removeIf(module -> module == null);
+        miscModules.removeIf(module -> module == null);
+        
         combatModules.sort(comparator);
         movementModules.sort(comparator);
         renderModules.sort(comparator);
