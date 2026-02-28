@@ -270,68 +270,6 @@ public class Scaffold extends Module {
                 this.shouldKeepY = false;
                 this.towering = false;
             }
-            
-            // ALWAYS apply rotation logic (moved outside canPlace check)
-            float currentYaw = this.getCurrentYaw();
-            float yawDiffTo180 = RotationUtil.wrapAngleDiff(currentYaw - 180.0F, event.getYaw());
-            float diagonalYaw = this.isDiagonal(currentYaw)
-                    ? yawDiffTo180
-                    : RotationUtil.wrapAngleDiff(currentYaw - 135.0F * ((currentYaw + 180.0F) % 90.0F < 45.0F ? 1.0F : -1.0F), event.getYaw());
-            
-            if (!this.canRotate) {
-                switch (this.rotationMode.getValue()) {
-                    case 1:
-                        if (this.yaw == -180.0F && this.pitch == 0.0F) {
-                            this.yaw = RotationUtil.quantizeAngle(diagonalYaw);
-                            this.pitch = RotationUtil.quantizeAngle(85.0F);
-                        } else {
-                            this.yaw = RotationUtil.quantizeAngle(diagonalYaw);
-                        }
-                        break;
-                    case 2:
-                        if (this.yaw == -180.0F && this.pitch == 0.0F) {
-                            this.yaw = RotationUtil.quantizeAngle(yawDiffTo180);
-                            this.pitch = RotationUtil.quantizeAngle(85.0F);
-                        } else {
-                            this.yaw = RotationUtil.quantizeAngle(yawDiffTo180);
-                        }
-                        break;
-                    case 3:
-                        if (this.yaw == -180.0F && this.pitch == 0.0F) {
-                            this.yaw = RotationUtil.quantizeAngle(diagonalYaw);
-                            this.pitch = RotationUtil.quantizeAngle(85.0F);
-                        } else {
-                            this.yaw = RotationUtil.quantizeAngle(diagonalYaw);
-                        }
-                }
-            }
-            
-            if (this.rotationMode.getValue() != 0) {
-                float targetYaw = this.yaw;
-                float targetPitch = this.pitch;
-                if (this.towering && (mc.thePlayer.motionY > 0.0 || mc.thePlayer.posY > (double) (this.startY + 1))) {
-                    float yawDiff = MathHelper.wrapAngleTo180_float(this.yaw - event.getYaw());
-                    float tolerance = this.rotationTick >= 2 ? RandomUtil.nextFloat(90.0F, 95.0F) : RandomUtil.nextFloat(30.0F, 35.0F);
-                    if (Math.abs(yawDiff) > tolerance) {
-                        float clampedYaw = RotationUtil.clampAngle(yawDiff, tolerance);
-                        targetYaw = RotationUtil.quantizeAngle(event.getYaw() + clampedYaw);
-                        this.rotationTick = Math.max(this.rotationTick, 1);
-                    }
-                }
-                if (this.isTowering()) {
-                    float yawDelta = MathHelper.wrapAngleTo180_float(mc.thePlayer.rotationYaw - event.getYaw());
-                    targetYaw = RotationUtil.quantizeAngle(event.getYaw() + yawDelta * RandomUtil.nextFloat(0.98F, 0.99F));
-                    targetPitch = RotationUtil.quantizeAngle(RandomUtil.nextFloat(30.0F, 80.0F));
-                    this.rotationTick = 3;
-                    this.towering = true;
-                }
-                event.setRotation(targetYaw, targetPitch, 3);
-                if (this.moveFix.getValue() == 1) {
-                    event.setPervRotation(targetYaw, 3);
-                }
-            }
-            
-            // Now handle placement (only if canPlace allows)
             if (this.canPlace()) {
                 ItemStack stack = mc.thePlayer.getHeldItem();
                 int count = ItemUtil.isBlock(stack) ? stack.stackSize : 0;
