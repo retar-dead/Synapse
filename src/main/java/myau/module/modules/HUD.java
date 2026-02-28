@@ -318,16 +318,16 @@ public class HUD extends Module {
                             firstToDraw = " - " + first;
                             break;
                         case 2: // ( )
-                            firstToDraw = " ( " + first + " ) ";
+                            firstToDraw = " ( " + first + " )";
                             break;
                         case 3: // [ ]
-                            firstToDraw = " [ " + first + " ] ";
+                            firstToDraw = " [ " + first + " ]";
                             break;
                         case 4: // { }
-                            firstToDraw = " { " + first + " } ";
+                            firstToDraw = " { " + first + " }";
                             break;
                         case 5: // < >
-                            firstToDraw = " < " + first + " > ";
+                            firstToDraw = " < " + first + " >";
                             break;
                         case 6: // /
                             firstToDraw = " / " + first;
