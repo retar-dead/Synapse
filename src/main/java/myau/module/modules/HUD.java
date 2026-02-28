@@ -91,17 +91,17 @@ public class HUD extends Module {
                     case 1: // - -> " - SUFFIX"
                         firstWidth = mc.fontRendererObj.getStringWidth(" - ") + mc.fontRendererObj.getStringWidth(first);
                         break;
-                    case 2: // ( ) -> " ( SUFFIX ) "
-                        firstWidth = mc.fontRendererObj.getStringWidth(" ( ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" ) ");
+                    case 2: // ( ) -> " ( SUFFIX )"
+                        firstWidth = mc.fontRendererObj.getStringWidth(" ( ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" )");
                         break;
-                    case 3: // [ ] -> " [ SUFFIX ] "
-                        firstWidth = mc.fontRendererObj.getStringWidth(" [ ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" ] ");
+                    case 3: // [ ] -> " [ SUFFIX ]"
+                        firstWidth = mc.fontRendererObj.getStringWidth(" [ ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" ]");
                         break;
-                    case 4: // { } -> " { SUFFIX } "
-                        firstWidth = mc.fontRendererObj.getStringWidth(" { ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" } ");
+                    case 4: // { } -> " { SUFFIX }"
+                        firstWidth = mc.fontRendererObj.getStringWidth(" { ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" }");
                         break;
-                    case 5: // < > -> " < SUFFIX > "
-                        firstWidth = mc.fontRendererObj.getStringWidth(" < ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" > ");
+                    case 5: // < > -> " < SUFFIX >"
+                        firstWidth = mc.fontRendererObj.getStringWidth(" < ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" >");
                         break;
                     case 6: // /
                         firstWidth = mc.fontRendererObj.getStringWidth(" / ") + mc.fontRendererObj.getStringWidth(first);
