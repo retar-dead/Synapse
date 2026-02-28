@@ -68,7 +68,7 @@ public class Cape extends Module {
     public final ModeProperty cape = new ModeProperty("cape", 0, CAPE_NAMES);
 
     public Cape() {
-        super("Cape", true);
+        super("Cape", true, false);
         System.out.println("[Cape] Module initialized successfully");
     }
 
