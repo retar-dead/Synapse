@@ -106,6 +106,7 @@ public class ClickGui extends GuiScreen {
 
         List<Module> mushModules = new ArrayList<>();
         mushModules.add(Myau.moduleManager.getModule(Insults.class));
+        mushModules.add(Myau.moduleManager.getModule(Tag.class));
         mushModules.add(Myau.moduleManager.getModule(AutoSoup.class));
         mushModules.add(Myau.moduleManager.getModule(AutoRecraft.class));
         mushModules.add(Myau.moduleManager.getModule(Refill.class));

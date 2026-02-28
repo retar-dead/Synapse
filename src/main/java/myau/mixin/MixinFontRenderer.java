@@ -3,6 +3,7 @@ package myau.mixin;
 import myau.Myau;
 import myau.module.modules.AntiObfuscate;
 import myau.module.modules.NickHider;
+import myau.module.modules.Tag;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -24,12 +25,20 @@ public abstract class MixinFontRenderer {
         if (Myau.moduleManager == null) {
             return string;
         } else {
+            // Apply Tag module modifications FIRST (before other modules)
+            Tag tagModule = (Tag) Myau.moduleManager.modules.get(Tag.class);
+            if (tagModule != null && tagModule.isEnabled()) {
+                string = tagModule.getTaggedName(string);
+            }
+            
             AntiObfuscate antiObfuscate = (AntiObfuscate) Myau.moduleManager.modules.get(AntiObfuscate.class);
             if (antiObfuscate.isEnabled()) {
                 string = antiObfuscate.stripObfuscated(string);
             }
             NickHider nickHider = (NickHider) Myau.moduleManager.modules.get(NickHider.class);
-            return nickHider.isEnabled() ? nickHider.replaceNick(string) : string;
+            string = nickHider.isEnabled() ? nickHider.replaceNick(string) : string;
+            
+            return string;
         }
     }
 
@@ -43,12 +52,20 @@ public abstract class MixinFontRenderer {
         if (Myau.moduleManager == null) {
             return string;
         } else {
+            // Apply Tag module modifications FIRST (before other modules)
+            Tag tagModule = (Tag) Myau.moduleManager.modules.get(Tag.class);
+            if (tagModule != null && tagModule.isEnabled()) {
+                string = tagModule.getTaggedName(string);
+            }
+            
             AntiObfuscate antiObfuscate = (AntiObfuscate) Myau.moduleManager.modules.get(AntiObfuscate.class);
             if (antiObfuscate.isEnabled()) {
                 string = antiObfuscate.stripObfuscated(string);
             }
             NickHider nickHider = (NickHider) Myau.moduleManager.modules.get(NickHider.class);
-            return nickHider.isEnabled() ? nickHider.replaceNick(string) : string;
+            string = nickHider.isEnabled() ? nickHider.replaceNick(string) : string;
+            
+            return string;
         }
     }
 

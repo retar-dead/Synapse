@@ -121,6 +121,7 @@ public class Myau {
         moduleManager.modules.put(Speed.class, new Speed());
         moduleManager.modules.put(SpeedMine.class, new SpeedMine());
         moduleManager.modules.put(Sprint.class, new Sprint());
+        moduleManager.modules.put(Tag.class, new Tag());
         moduleManager.modules.put(TargetHUD.class, new TargetHUD());
         moduleManager.modules.put(TargetStrafe.class, new TargetStrafe());
         moduleManager.modules.put(Tracers.class, new Tracers());

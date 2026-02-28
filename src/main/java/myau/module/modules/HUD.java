@@ -92,16 +92,16 @@ public class HUD extends Module {
                         firstWidth = mc.fontRendererObj.getStringWidth(" - ") + mc.fontRendererObj.getStringWidth(first);
                         break;
                     case 2: // ( ) -> " ( SUFFIX ) "
-                        firstWidth = mc.fontRendererObj.getStringWidth(" ( ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" )");
+                        firstWidth = mc.fontRendererObj.getStringWidth(" ( ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" ) ");
                         break;
                     case 3: // [ ] -> " [ SUFFIX ] "
-                        firstWidth = mc.fontRendererObj.getStringWidth(" [ ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" ]");
+                        firstWidth = mc.fontRendererObj.getStringWidth(" [ ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" ] ");
                         break;
                     case 4: // { } -> " { SUFFIX } "
-                        firstWidth = mc.fontRendererObj.getStringWidth(" { ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" }");
+                        firstWidth = mc.fontRendererObj.getStringWidth(" { ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" } ");
                         break;
                     case 5: // < > -> " < SUFFIX > "
-                        firstWidth = mc.fontRendererObj.getStringWidth(" < ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" >");
+                        firstWidth = mc.fontRendererObj.getStringWidth(" < ") + mc.fontRendererObj.getStringWidth(first) + mc.fontRendererObj.getStringWidth(" > ");
                         break;
                     case 6: // /
                         firstWidth = mc.fontRendererObj.getStringWidth(" / ") + mc.fontRendererObj.getStringWidth(first);
