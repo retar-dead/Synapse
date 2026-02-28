@@ -69,7 +69,6 @@ public class Cape extends Module {
 
     public Cape() {
         super("Cape", true, false);
-        System.out.println("[Cape] Module initialized successfully");
     }
 
     @Override
@@ -99,7 +98,6 @@ public class Cape extends Module {
             Myau.customCape = null;
         }
     }
-
     @EventTarget
     public void onTick(TickEvent event) {
         if (this.isEnabled()) {
@@ -110,7 +108,6 @@ public class Cape extends Module {
             }
         }
     }
-
     @EventTarget
     public void onRenderLiving(RenderLivingEvent event) {
         if (this.isEnabled() && Myau.customCape != null && event.getEntity() instanceof EntityPlayerSP) {
@@ -120,7 +117,6 @@ public class Cape extends Module {
             }
         }
     }
-
     private void renderCape(EntityPlayer player) {
         if (Myau.customCape == null) return;
         try {
@@ -132,20 +128,16 @@ public class Cape extends Module {
         } catch (Exception ignored) {
         }
     }
-
     public ResourceLocation getSelectedCape() {
         int index = this.cape.getValue();
         if (index < 0 || index >= CAPE_FILES.length) {
             return null;
         }
-
         if (capeCache.containsKey(index)) {
             return capeCache.get(index);
         }
-
         BufferedImage img = null;
         String capeFileName = CAPE_FILES[index];
-
         // Try 1: Load from resources (src/main/resources/myau/capes/)
         try {
             String resourcePath = "/myau/capes/" + capeFileName;
@@ -155,9 +147,7 @@ public class Cape extends Module {
                 in.close();
             }
         } catch (Exception e) {
-            System.out.println("[Cape] Failed to load from resources: " + capeFileName);
         }
-
         // Try 2: Load from Java source folder (src/main/java/myau/capes/)
         if (img == null) {
             try {
@@ -165,14 +155,11 @@ public class Cape extends Module {
                 File capeFile = new File(filePath);
                 if (capeFile.exists()) {
                     img = ImageIO.read(capeFile);
-                } else {
-                    System.out.println("[Cape] File not found at " + filePath);
                 }
             } catch (Exception e) {
-                System.out.println("[Cape] Failed to load from source: " + capeFileName);
+                // Failed to load from source
             }
         }
-
         // Try 3: Load from current working directory
         if (img == null) {
             try {
@@ -186,7 +173,6 @@ public class Cape extends Module {
             } catch (Exception ignored) {
             }
         }
-
         // Create and cache the texture if loaded
         if (img != null) {
             try {
@@ -195,11 +181,11 @@ public class Cape extends Module {
                 capeCache.put(index, rl);
                 return rl;
             } catch (Exception e) {
-                System.out.println("[Cape] Failed to create DynamicTexture: " + e.getMessage());
             }
         }
 
-        System.out.println("[Cape] Could not load cape: " + capeFileName);
         return null;
     }
 }
+
+// nao sei porque tem tanto comentario
