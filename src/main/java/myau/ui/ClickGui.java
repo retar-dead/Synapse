@@ -191,7 +191,31 @@ public class ClickGui extends GuiScreen {
     public void drawScreen(int x, int y, float p) {
         drawRect(0, 0, this.width, this.height, new Color(0, 0, 0, 100).getRGB());
 
-        mc.fontRendererObj.drawStringWithShadow("fuck niggers edition", 4, this.height - 3 - mc.fontRendererObj.FONT_HEIGHT, new Color(255, 255, 255).getRGB());
+        int changelogY = 3;
+        int lineHeight = mc.fontRendererObj.FONT_HEIGHT + 2;
+        
+        mc.fontRendererObj.drawStringWithShadow("< CHANGELOG >", 4, changelogY, new Color(255, 153, 0).getRGB());
+        changelogY += lineHeight;
+        
+        mc.fontRendererObj.drawStringWithShadow("+ tags", 4, changelogY, new Color(149, 149, 149).getRGB());
+        changelogY += lineHeight;
+        
+        mc.fontRendererObj.drawStringWithShadow("+ capes", 4, changelogY, new Color(149, 149, 149).getRGB());
+        changelogY += lineHeight;
+        
+        mc.fontRendererObj.drawStringWithShadow("+ .cskin", 4, changelogY, new Color(149, 149, 149).getRGB());
+        changelogY += lineHeight;
+        
+        mc.fontRendererObj.drawStringWithShadow("+ autosoup", 4, changelogY, new Color(149, 149, 149).getRGB());
+        changelogY += lineHeight;
+        
+        mc.fontRendererObj.drawStringWithShadow("+ autorecraft", 4, changelogY, new Color(149, 149, 149).getRGB());
+        changelogY += lineHeight;
+        
+        mc.fontRendererObj.drawStringWithShadow("+ refill", 4, changelogY, new Color(149, 149, 149).getRGB());
+        changelogY += lineHeight;
+        
+        mc.fontRendererObj.drawStringWithShadow("$ fixes", 4, changelogY, new Color(149, 149, 149).getRGB());
 
         for (CategoryComponent category : categoryList) {
             category.render(this.fontRendererObj);

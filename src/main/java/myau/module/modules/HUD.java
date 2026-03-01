@@ -43,11 +43,11 @@ public class HUD extends Module {
     public final IntProperty offsetY = new IntProperty("offset-y", 2, 0, 255);
     public final FloatProperty scale = new FloatProperty("scale", 1.0F, 0.5F, 1.5F);
     public final PercentProperty background = new PercentProperty("background", 25);
+    public final ModeProperty suffixSeparator = new ModeProperty("suffix-separator", 0, new String[]{"DEFAULT", "-", "( )", "[ ]", "{ }", "< >", "/"});
     public final BooleanProperty showBar = new BooleanProperty("bar", true);
     public final BooleanProperty shadow = new BooleanProperty("shadow", true);
     public final BooleanProperty suffixes = new BooleanProperty("suffixes", true);
     public final BooleanProperty lowerCase = new BooleanProperty("lower-case", false);
-    public final ModeProperty suffixSeparator = new ModeProperty("suffix-separator", 0, new String[]{"DEFAULT", "-", "( )", "[ ]", "{ }", "< >", "/"});
     public final BooleanProperty chatOutline = new BooleanProperty("chat-outline", true);
     public final BooleanProperty blinkTimer = new BooleanProperty("blink-timer", true);
     public final BooleanProperty toggleSound = new BooleanProperty("toggle-sounds", true);
