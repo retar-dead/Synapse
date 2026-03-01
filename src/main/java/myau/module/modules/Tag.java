@@ -46,7 +46,7 @@ public class Tag extends Module {
             "&1&lBETA &r&1{player}",
             "&6&lCHAMPION &r&6{player}",
             "&b&lSTREAMER &r&b{player}",
-            "&b&lYT &r&a{player}",
+            "&b&lYT &r&b{player}",
             "&b&lPARTNER &r&b{player}",
             "&3&lPARTNER+ &r&3{player}",
             "&2&lBUILDER &r&2{player}",
