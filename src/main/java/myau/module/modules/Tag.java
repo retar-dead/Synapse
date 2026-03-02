@@ -88,7 +88,6 @@ public class Tag extends Module {
         if (isMyName) {
             String tagFormat = TAG_FORMATS[this.selectedTag.getValue()];
             
-            // Convert & to § for Minecraft color codes and replace {player} with actual name
             tagFormat = tagFormat.replace('&', '§').replace("{player}", myPlayerName);
             
             return tagFormat;

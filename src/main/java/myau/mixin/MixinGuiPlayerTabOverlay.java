@@ -21,7 +21,6 @@ public abstract class MixinGuiPlayerTabOverlay {
             )
     )
     private String getPlayerNameFormat(Team team, String name) {
-        // Temporariamente sem ClanTags: apenas retorna o nome formatado padrão
         return ScorePlayerTeam.formatPlayerName(team, name);
     }
 }

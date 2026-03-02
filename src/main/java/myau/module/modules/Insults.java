@@ -73,7 +73,6 @@ public class Insults extends Module {
         String msg = packet.getChatComponent().getUnformattedText();
         if (msg == null) return;
 
-        // Procurar mensagem de morte do tipo: "MORTE Você matou {player}."
         if (!msg.contains("MORTE") || !msg.contains("Você matou ")) return;
 
         int idx = msg.indexOf("Você matou ");
@@ -82,7 +81,6 @@ public class Insults extends Module {
         String after = msg.substring(idx + "Você matou ".length()).trim();
         if (after.isEmpty()) return;
 
-        // Pega primeiro token como nick e remove pontuação final
         String player = after.split(" ")[0].replaceAll("[^A-Za-z0-9_]", "");
         if (player.isEmpty()) return;
 

@@ -77,7 +77,6 @@ public class Refill extends Module {
                         mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, soupSlots.get(index), 0, 1, mc.thePlayer);
                     } else {
                         start = false;
-                        // Não fecha o inventário - modo manual
                     }
                 } else {
                     int soupSlot = getSoupInInventory();
@@ -85,7 +84,6 @@ public class Refill extends Module {
                         mc.playerController.windowClick(mc.thePlayer.inventoryContainer.windowId, soupSlot, 0, 1, mc.thePlayer);
                     } else {
                         start = false;
-                        // Não fecha o inventário - modo manual
                     }
                 }
             }

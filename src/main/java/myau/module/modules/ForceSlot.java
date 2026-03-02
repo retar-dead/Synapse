@@ -54,7 +54,7 @@ public class ForceSlot extends Module {
         mc.playerController.windowClick(w, targetSlot, 0, 0, mc.thePlayer);
 
         swapTimer.reset();
-        mc.displayGuiScreen(null); // fecha o inventário automaticamente
+        mc.displayGuiScreen(null);
     }
 
     @EventTarget
@@ -77,7 +77,6 @@ public class ForceSlot extends Module {
             return;
         }
 
-        // espera outra gui fechar antes de mexer no inventário
         if (mc.currentScreen != null && !(mc.currentScreen instanceof GuiInventory)) {
             return;
         }
