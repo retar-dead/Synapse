@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import myau.Myau;
 import myau.module.Module;
 import myau.module.modules.*;
+import myau.module.modules.Timers;
 import myau.ui.components.CategoryComponent;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
@@ -110,6 +111,7 @@ public class ClickGui extends GuiScreen {
         mushModules.add(capeModule);
         mushModules.add(Myau.moduleManager.getModule(Insults.class));
         mushModules.add(Myau.moduleManager.getModule(Tag.class));
+        mushModules.add(Myau.moduleManager.getModule(Timers.class));
         mushModules.add(Myau.moduleManager.getModule(AutoSoup.class));
         mushModules.add(Myau.moduleManager.getModule(AutoRecraft.class));
         mushModules.add(Myau.moduleManager.getModule(Refill.class));
