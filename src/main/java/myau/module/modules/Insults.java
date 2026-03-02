@@ -57,6 +57,24 @@ public class Insults extends Module {
             "Ainda bem que você morreu %s, criança cocuda do caralho.",
             "%s eu tenho uma coleção de macacos da Macacolândia!",
             "Wow you just got raped! %s"
+            "Vai virar pedreiro lil bro %s"
+            "Deleta o game que é melhor %s"
+            "Sai do fake Marciano Comunista %s"
+            "Se for chorar manda audio %s"
+            "Baixa um cheat na CrackCrew %s"
+            "Você é o motivo do KanyeWest ter virado nazi %s"
+            "Como foi a festa do Diddy? %s"
+            "Seu pai chora no banho todo dia por causa de você %s"
+            "Good Goy %s"
+            "Benjamin Netanyahu está orgulhoso de você %s"
+            "%s Foi conhecer o Charlie Kirk!"
+            "%s Clicou ( ) Não Clicou (X)"
+            "%s NUEVAYoL!!!"
+            "%s Mirá, puñeta, no me quiten el perreo!"
+            "%s, Não é pq o game é gratis que você tem que baixar..."
+            "Matei um turco no rolas. %s"
+            "print:(minhas_costas_tao_doendo) %s"
+
     };
 
     public Insults() {
