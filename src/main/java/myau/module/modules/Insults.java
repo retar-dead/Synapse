@@ -36,7 +36,7 @@ public class Insults extends Module {
             "%s abre as perna pra minha gang lil hoe",
             "%s vi seu nickname no doxbin recentemente",
             "%s eu te vi na 696 ontem a noite, como foi o lulz?",
-            "Sempre utilize ɢᴇᴛᴍᴏɴᴇｒᴏ.ᴏʀɢ %s",
+            "Utilize monero em todas as suas transações %s",
             "Como foi ter o pai assassinado na operação da Penha? %s",
             "%s como é webnamorar em 2026?",
             "Já entrou na Crackcrew? %s",
@@ -56,25 +56,40 @@ public class Insults extends Module {
             "%s falar \"mds\" não vai te ajudar.",
             "Ainda bem que você morreu %s, criança cocuda do caralho.",
             "%s eu tenho uma coleção de macacos da Macacolândia!",
-            "Wow you just got raped! %s"
-            "Vai virar pedreiro lil bro %s"
-            "Deleta o game que é melhor %s"
-            "Sai do fake Marciano Comunista %s"
-            "Se for chorar manda audio %s"
-            "Baixa um cheat na CrackCrew %s"
-            "Você é o motivo do KanyeWest ter virado nazi %s"
-            "Como foi a festa do Diddy? %s"
-            "Seu pai chora no banho todo dia por causa de você %s"
-            "Good Goy %s"
-            "Benjamin Netanyahu está orgulhoso de você %s"
-            "%s Foi conhecer o Charlie Kirk!"
-            "%s Clicou ( ) Não Clicou (X)"
-            "%s NUEVAYoL!!!"
-            "%s Mirá, puñeta, no me quiten el perreo!"
-            "%s, Não é pq o game é gratis que você tem que baixar..."
-            "Matei um turco no rolas. %s"
-            "print:(minhas_costas_tao_doendo) %s"
-
+            "Wow you just got raped! %s",
+            "Vai virar pedreiro lil bro %s",
+            "Deleta o game que é melhor %s",
+            "Sai do fake Marciano Comunista %s",
+            "Se for chorar manda audio %s",
+            "Baixa um cheat na CrackCrew %s",
+            "Você é o motivo do KanyeWest ter virado nazista %s",
+            "Como foi a festa do Diddy? %s",
+            "Seu pai chora no banho todo dia por causa de você %s",
+            "Good Goy %s",
+            "Benjamin Netanyahu está orgulhoso de você %s",
+            "%s Foi conhecer o Charlie Kirk!",
+            "%s Clicou ( ) Não Clicou (X)",
+            "%s NUEVAYoL!!!",
+            "%s Mirá, puñeta, no me quiten el perreo!",
+            "%s, Não é pq o game é gratis que você tem que baixar...",
+            "Matei um turco no rolas. %s",
+            "Print:(minhas_costas_tao_doendo) %s",
+            "%s mantenha o foco, você vai conseguir!",
+            "A mira do %s agora é patrocinada pelo Parkinson!",
+            "%s eu não estou usando reach, é só você clicar mais rápido",
+            "Um milhão de anos de evolução, e temos pessoas como %s",
+            "Isso foi realmente uma jogada muito ruim %s",
+            "Você é a inspiração pro aborto %s",
+            "%s você gosta tanto assim de morrer?",
+            "Estou surpreso que você tenha conseguido clicar no botão de \"instalar\" %s",
+            "A quantidade de kills que você tem é equivalente a suas células cerebrais %s",
+            "É como se eu pudesse ouvir você chorando %s",
+            "Synapse continua dando bypass no CrisAc #getbettermariaum %s",
+            "Use Synapse today! %s",
+            "Compre um vip para morrer pro Synapse Client! %s",
+            "Porque tentar jogar em um servidor onde todos usam cheat %s?",
+            "%s sua conta foi morta por não utilizar trapaças #getsynapsetoday",
+            "%s porque você não pode ser igual o XandaoXisde?"
     };
 
     public Insults() {
