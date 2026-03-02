@@ -5,12 +5,14 @@ import myau.event.types.EventType;
 import myau.events.PacketEvent;
 import myau.module.Module;
 import myau.util.ChatUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.play.server.S02PacketChat;
 
 import java.util.Random;
 
 public class Insults extends Module {
     private static final Random RANDOM = new Random();
+    private static final Minecraft mc = Minecraft.getMinecraft();
 
     private static final String[] INSULTS = new String[]{
             "%s https://forum.mush.com.br/como-parar-de-morrer-na-arena",
@@ -119,8 +121,57 @@ public class Insults extends Module {
 
         String template = INSULTS[RANDOM.nextInt(INSULTS.length)];
         String message = template.replace("%s", player);
+        
+        // Processar placeholders adicionais
+        message = processPlaceholders(message);
 
         ChatUtil.sendMessage(message);
+    }
+
+    private String processPlaceholders(String message) {
+        // %p = nome do próprio jogador
+        if (message.contains("%p")) {
+            String playerName = mc.thePlayer != null ? mc.thePlayer.getName() : "Unknown";
+            message = message.replace("%p", playerName);
+        }
+
+        // %r = jogador aleatório da tablist
+        if (message.contains("%r")) {
+            String randomPlayer = getRandomPlayerFromTablist();
+            message = message.replace("%r", randomPlayer);
+        }
+
+        return message;
+    }
+
+    private String getRandomPlayerFromTablist() {
+        if (mc.thePlayer == null || mc.thePlayer.sendQueue == null) {
+            return "Alguém";
+        }
+
+        // Tenta pegar a lista de players do tablist
+        try {
+            Object tabListData = mc.thePlayer.sendQueue.getClass().getField("playerInfoMap").get(mc.thePlayer.sendQueue);
+            if (tabListData instanceof java.util.Collection) {
+                java.util.Collection<?> players = (java.util.Collection<?>) tabListData;
+                if (players.isEmpty()) return "Alguém";
+
+                int randomIndex = RANDOM.nextInt(players.size());
+                Object[] playersArray = players.toArray();
+                Object playerInfo = playersArray[randomIndex];
+
+                // Tenta pegar o nome do jogador
+                if (playerInfo != null) {
+                    Object profile = playerInfo.getClass().getMethod("getProfile").invoke(playerInfo);
+                    String name = (String) profile.getClass().getMethod("getName").invoke(profile);
+                    return name != null ? name : "Alguém";
+                }
+            }
+        } catch (Exception e) {
+            // Fallback se não conseguir acessar a tablist
+        }
+
+        return "Alguém";
     }
 }
 
