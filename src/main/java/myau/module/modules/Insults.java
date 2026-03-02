@@ -91,7 +91,10 @@ public class Insults extends Module {
             "Compre um vip para morrer pro Synapse Client! %s",
             "Porque tentar jogar em um servidor onde todos usam cheat %s?",
             "%s sua conta foi morta por não utilizar trapaças #getsynapsetoday",
-            "%s porque você não pode ser igual o XandaoXisde?"
+            "%s porque você não pode ser igual o XandaoXisde?",
+            "%s usar Inventory Tweaks >>[1.12 only]<< ainda é pior do que usar synapse!",
+            "%s não seja furry igual o carlobloodrain"
+            "%s se você odeia o trump assim como eu, use synapse e patrocine sua morte!"
     };
 
     public Insults() {
