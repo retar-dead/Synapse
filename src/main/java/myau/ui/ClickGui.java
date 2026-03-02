@@ -109,6 +109,7 @@ public class ClickGui extends GuiScreen {
         Module capeModule = Myau.moduleManager.getModule(Cape.class);
         System.out.println("[ClickGui] Cape Module: " + capeModule);
         mushModules.add(capeModule);
+        mushModules.add(Myau.moduleManager.getModule(AntiHulk.class));
         mushModules.add(Myau.moduleManager.getModule(Insults.class));
         mushModules.add(Myau.moduleManager.getModule(Tag.class));
         mushModules.add(Myau.moduleManager.getModule(Timers.class));

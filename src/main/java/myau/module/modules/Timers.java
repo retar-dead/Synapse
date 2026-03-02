@@ -114,7 +114,7 @@ public class Timers extends Module {
         int mode = displayMode.getValue();
         
         if (mode == 0 || mode == 1) {
-            renderTimer(29, "&g&lFEAST: &f", yOffset);
+            renderTimer(29, "&6&lFEAST: &f", yOffset);
             yOffset += 12;
         }
         
