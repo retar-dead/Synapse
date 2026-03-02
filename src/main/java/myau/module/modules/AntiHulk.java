@@ -9,6 +9,7 @@ import net.minecraft.client.settings.KeyBinding;
 
 public class AntiHulk extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
+    private boolean wasRiding = false;
 
     public AntiHulk() {
         super("AntiHulk", false);
@@ -20,11 +21,17 @@ public class AntiHulk extends Module {
             return;
         }
 
-        // While riding, hold sneak; when not riding, release sneak so player stops sneaking after dismount
-        if (mc.thePlayer.isRiding()) {
+        boolean isRiding = mc.thePlayer.isRiding();
+
+        // Ao montar, apertar shift
+        if (isRiding && !wasRiding) {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
-        } else {
+        }
+        // Ao desmontar, soltar shift
+        else if (!isRiding && wasRiding) {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
         }
+
+        wasRiding = isRiding;
     }
 }
