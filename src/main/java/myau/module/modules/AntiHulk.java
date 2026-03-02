@@ -20,8 +20,11 @@ public class AntiHulk extends Module {
             return;
         }
 
+        // While riding, hold sneak; when not riding, release sneak so player stops sneaking after dismount
         if (mc.thePlayer.isRiding()) {
             KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), true);
+        } else {
+            KeyBinding.setKeyBindState(mc.gameSettings.keyBindSneak.getKeyCode(), false);
         }
     }
 }
