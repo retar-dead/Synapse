@@ -72,6 +72,7 @@ public class Myau {
         moduleManager.modules.put(AutoClicker.class, new AutoClicker());
         moduleManager.modules.put(AutoAnduril.class, new AutoAnduril());
         moduleManager.modules.put(AutoHeal.class, new AutoHeal());
+        moduleManager.modules.put(AutoPot.class, new AutoPot());
         moduleManager.modules.put(AutoSoup.class, new AutoSoup());
         moduleManager.modules.put(AutoRecraft.class, new AutoRecraft());
         moduleManager.modules.put(AutoTool.class, new AutoTool());
