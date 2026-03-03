@@ -32,6 +32,7 @@ public class AutoRecraft extends Module {
     public final IntProperty recraftMaxDelay = new IntProperty("recraft-max-delay", 42, 1, 400);
     public final IntProperty startWith = new IntProperty("start-with", 3, 0, 41);
     public final BooleanProperty autoclose = new BooleanProperty("autoclose", false);
+    public final BooleanProperty autoOpen = new BooleanProperty("auto-open", true);
     public final BooleanProperty cactusMode = new BooleanProperty("cactus", false);
     public final BooleanProperty cocoaMode = new BooleanProperty("cocoa", true);
     public final BooleanProperty mushroomMode = new BooleanProperty("mushroom", true);
@@ -42,6 +43,8 @@ public class AutoRecraft extends Module {
 
     private final HashMap<String, Integer> recraftMap = new HashMap<>();
     public boolean start = false;
+    // true quando o inventário foi aberto automaticamente pelo módulo (para não fechar GUIs abertas manualmente)
+    private boolean openedByAutoOpen = false;
     private long recraftDelay = RandomUtils.nextLong(30L, 42L);
     private int step = 1;
 
@@ -62,8 +65,15 @@ public class AutoRecraft extends Module {
         }
 
         if (!(mc.currentScreen instanceof GuiInventory)) {
-            reset();
-            return;
+            // Se auto-open ativado e as condições exigirem recraft, abra automaticamente o inventário
+            if (autoOpen.getValue() && shouldAutoOpen() && mc.currentScreen == null) {
+                mc.displayGuiScreen(new GuiInventory(mc.thePlayer));
+                openedByAutoOpen = true;
+                // continuar execução com a GUI aberta
+            } else {
+                reset();
+                return;
+            }
         }
 
         if (start) {
@@ -278,6 +288,24 @@ public class AutoRecraft extends Module {
     }
 
     /**
+     * Decide se devemos abrir o inventário automaticamente para iniciar/continuar o recraft.
+     */
+    private boolean shouldAutoOpen() {
+        if (!start) {
+            if (getTotalSoupsInInventory() <= startWith.getValue()) {
+                if (cactusMode.getValue() && hasCactusRecraft()) return true;
+                if (cocoaMode.getValue() && hasCocoaRecraft()) return true;
+                if (mushroomMode.getValue() && hasMushroomRecraft()) return true;
+                return false;
+            }
+            return false;
+        } else {
+            // se já iniciou o recraft, abrir quando houver passos a executar
+            return !recraftMap.isEmpty();
+        }
+    }
+
+    /**
      * modes:
      * 1 - cactus
      * 2 - cocoa
@@ -345,9 +373,11 @@ public class AutoRecraft extends Module {
         start = false;
         step = 1;
         recraftDelay = 0;
-        if (autoclose.getValue() && mc.currentScreen instanceof GuiInventory) {
+        // Só fechar a GUI se ela foi aberta automaticamente por este módulo e autoclose estiver ativado
+        if (autoclose.getValue() && openedByAutoOpen && mc.currentScreen instanceof GuiInventory) {
             mc.displayGuiScreen(null);
         }
+        openedByAutoOpen = false;
     }
 
     @Override

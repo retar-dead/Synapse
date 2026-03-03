@@ -24,11 +24,15 @@ public class Refill extends Module {
     public final IntProperty refilMaxDelay = new IntProperty("refil-max-delay", 5, 1, 400);
     public final IntProperty startWith = new IntProperty("start-with", 4, 0, 9);
     public final BooleanProperty randomize = new BooleanProperty("randomize", false);
+    public final BooleanProperty autoOpen = new BooleanProperty("auto-open", true);
+    public final BooleanProperty autoclose = new BooleanProperty("autoclose", false);
 
     private final TimerUtil refilTimer = new TimerUtil();
 
     private long delay = 0;
     private boolean start = false;
+    // true quando o inventário foi aberto automaticamente pelo módulo (para não fechar GUIs abertas manualmente)
+    private boolean openedByAutoOpen = false;
 
     public Refill() {
         super("Refill", false);
@@ -53,8 +57,15 @@ public class Refill extends Module {
         }
 
         if (!(mc.currentScreen instanceof GuiInventory)) {
-            reset();
-            return;
+            // Se auto-open ativado e as condições exigirem refill, abra automaticamente o inventário
+            if (autoOpen.getValue() && shouldAutoOpen() && mc.currentScreen == null) {
+                mc.displayGuiScreen(new GuiInventory(mc.thePlayer));
+                openedByAutoOpen = true;
+                // continuar execução com a GUI aberta
+            } else {
+                reset();
+                return;
+            }
         }
 
         if (start) {
@@ -102,6 +113,24 @@ public class Refill extends Module {
         refilTimer.reset();
         start = false;
         delay = 0;
+        // Só fechar a GUI se ela foi aberta automaticamente por este módulo e autoclose estiver ativado
+        if (autoclose.getValue() && openedByAutoOpen && mc.currentScreen instanceof GuiInventory) {
+            mc.displayGuiScreen(null);
+        }
+        openedByAutoOpen = false;
+    }
+
+    /**
+     * Decide se devemos abrir o inventário automaticamente para iniciar/continuar o refill.
+     */
+    private boolean shouldAutoOpen() {
+        if (!start) {
+            // Verifica se há sopa no inventário e se a quantidade na hotbar está baixa
+            return hasSoupInInventory() && getSoupAmountInHotbar() <= startWith.getValue();
+        } else {
+            // se já iniciou o refill, continuar enquanto houver sopa
+            return hasSoupInInventory();
+        }
     }
 
     private boolean hasSoupInInventory() {
