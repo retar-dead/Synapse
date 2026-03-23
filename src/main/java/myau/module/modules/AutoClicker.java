@@ -23,8 +23,8 @@ public class AutoClicker extends Module {
     private long clickDelay = 0L;
     private boolean blockHitPending = false;
     private long blockHitDelay = 0L;
-    public final IntProperty minCPS = new IntProperty("min-cps", 8, 1, 100);
-    public final IntProperty maxCPS = new IntProperty("max-cps", 12, 1, 100);
+    public final IntProperty minCPS = new IntProperty("min-cps", 8, 1, 500);
+    public final IntProperty maxCPS = new IntProperty("max-cps", 12, 1, 500);
     public final BooleanProperty blockHit = new BooleanProperty("block-hit", false);
     public final FloatProperty blockHitTicks = new FloatProperty("block-hit-ticks", 1.5F, 1.0F, 20.0F, this.blockHit::getValue);
     public final BooleanProperty weaponsOnly = new BooleanProperty("weapons-only", true);
