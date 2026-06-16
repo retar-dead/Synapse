@@ -66,7 +66,7 @@ public class AutoPot extends Module {
 
     @EventTarget
     public void onUpdate(UpdateEvent event) {
-        if (mc.thePlayer == null || mc.theWorld == null) return;
+        if (!this.isEnabled() || mc.thePlayer == null || mc.theWorld == null) return;
         if (event.getType() == EventType.PRE) {
             if (this.readyToThrow && potting) {
                 if (this.jump && this.jumpTicks >= 0) {
@@ -89,7 +89,7 @@ public class AutoPot extends Module {
 
     @EventTarget
     public void onPlayerUpdate(PlayerUpdateEvent event) {
-        if (mc.thePlayer == null || mc.theWorld == null) return;
+        if (!this.isEnabled() || mc.thePlayer == null || mc.theWorld == null) return;
         boolean forceJump = potMode.getValue() == 2;
         if (mc.currentScreen instanceof GuiInventory) {
             haltTicks = 10;
