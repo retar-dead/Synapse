@@ -48,6 +48,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -69,6 +72,9 @@ public class BedNuker extends Module {
     private boolean readyToBreak = false;
     private boolean breaking = false;
     private boolean waitingForStart = false;
+    private BlockPos actualBedPos = null;
+    private List<BlockPos> plannedPath = new ArrayList<>();
+    private int currentPathIndex = 0;
     public final ModeProperty mode = new ModeProperty("mode", 0, new String[]{"LEGIT", "SWAP"});
     public final FloatProperty range = new FloatProperty("range", 4.5F, 3.0F, 6.0F);
     public final PercentProperty speed = new PercentProperty("speed", 0);
@@ -87,6 +93,9 @@ public class BedNuker extends Module {
             mc.theWorld.sendBlockBreakProgress(mc.thePlayer.getEntityId(), this.targetBed, -1);
         }
         this.targetBed = null;
+        this.actualBedPos = null;
+        this.plannedPath.clear();
+        this.currentPathIndex = 0;
         this.breakStage = 0;
         this.tickCounter = 0;
         this.breakProgress = 0.0F;
@@ -209,39 +218,143 @@ public class BedNuker extends Module {
         return this.getBreakDelta(blockState, blockPos, slot, mc.thePlayer.onGround);
     }
 
-    private BlockPos validateBedPlacement(BlockPos bedPosition) {
+    private static class PathOption {
+        List<BlockPos> blocks;
+        double totalHardness;
+        int blockCount;
+
+        PathOption(List<BlockPos> blocks, double totalHardness) {
+            this.blocks = blocks;
+            this.totalHardness = totalHardness;
+            this.blockCount = blocks.size();
+        }
+
+        double getCost() {
+            if (this.blockCount == 0) return 0.0;
+            return (this.blockCount * 1000) + this.totalHardness;
+        }
+    }
+
+    private boolean isPassableBlock(BlockPos pos) {
+        Block block = mc.theWorld.getBlockState(pos).getBlock();
+        return BlockUtil.isReplaceable(block) || block instanceof BlockBed;
+    }
+
+    private List<BlockPos> findOptimalPath(BlockPos bedPosition) {
         IBlockState blockState = mc.theWorld.getBlockState(bedPosition);
-        if (blockState.getBlock() instanceof BlockBed) {
-            ArrayList<BlockPos> pos = new ArrayList<>();
-            EnumPartType partType = blockState.getValue(BlockBed.PART);
-            EnumFacing facing = blockState.getValue(BlockBed.FACING);
-            for (BlockPos blockPos : Arrays.asList(bedPosition, bedPosition.offset(partType == EnumPartType.HEAD ? facing.getOpposite() : facing))) {
-                for (EnumFacing enumFacing : Arrays.asList(EnumFacing.UP, EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST)) {
-                    Block block = mc.theWorld.getBlockState(blockPos.offset(enumFacing)).getBlock();
-                    if (BlockUtil.isReplaceable(block)) {
-                        return null;
-                    }
-                    if (!(block instanceof BlockBed)) {
-                        pos.add(blockPos.offset(enumFacing));
+        if (!(blockState.getBlock() instanceof BlockBed))
+            return new ArrayList<>();
+
+        EnumPartType partType = blockState.getValue(BlockBed.PART);
+        EnumFacing facing = blockState.getValue(BlockBed.FACING);
+        BlockPos otherPart = bedPosition.offset(partType == EnumPartType.HEAD ? facing.getOpposite() : facing);
+
+        List<BlockPos> bedParts = Arrays.asList(bedPosition, otherPart);
+
+        double bedCenterX = (bedPosition.getX() + otherPart.getX()) / 2.0 + 0.5;
+        double bedCenterY = (bedPosition.getY() + otherPart.getY()) / 2.0 + 0.5;
+        double bedCenterZ = (bedPosition.getZ() + otherPart.getZ()) / 2.0 + 0.5;
+
+        double playerX = mc.thePlayer.posX;
+        double playerY = mc.thePlayer.posY + mc.thePlayer.getEyeHeight();
+        double playerZ = mc.thePlayer.posZ;
+
+        List<PathOption> options = new ArrayList<>();
+        List<BlockPos> targetPoints = new ArrayList<>();
+
+        for (BlockPos bedPart : bedParts) {
+            targetPoints.add(bedPart);
+            for (EnumFacing dir : EnumFacing.values())
+                targetPoints.add(bedPart.offset(dir));
+        }
+
+        for (BlockPos targetPoint : targetPoints) {
+            Set<BlockPos> blockingBlocks = new HashSet<>();
+            double totalHardness = 0.0;
+
+            double distSq = targetPoint.distanceSqToCenter(playerX, playerY, playerZ);
+            double maxDist = this.range.getValue() + 3.0;
+            if (distSq > maxDist * maxDist) continue;
+
+            double targetX = targetPoint.getX() + 0.5;
+            double targetY = targetPoint.getY() + 0.5;
+            double targetZ = targetPoint.getZ() + 0.5;
+
+            double dx = targetX - playerX;
+            double dy = targetY - playerY;
+            double dz = targetZ - playerZ;
+            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (distance < 0.1) continue;
+
+            dx /= distance;
+            dy /= distance;
+            dz /= distance;
+
+            Set<BlockPos> checked = new HashSet<>();
+            for (double d = 0.1; d < distance; d += 0.1) {
+                double cx = playerX + dx * d;
+                double cy = playerY + dy * d;
+                double cz = playerZ + dz * d;
+                BlockPos currentPos = new BlockPos(cx, cy, cz);
+                if (!checked.contains(currentPos)) {
+                    checked.add(currentPos);
+                    if (!bedParts.contains(currentPos) && !isPassableBlock(currentPos)
+                            && PlayerUtil.isBlockWithinReach(currentPos, playerX, playerY, playerZ, this.range.getValue().doubleValue())) {
+                        if (!blockingBlocks.contains(currentPos)) {
+                            blockingBlocks.add(currentPos);
+                            IBlockState state = mc.theWorld.getBlockState(currentPos);
+                            Block block = state.getBlock();
+                            float hardness = block.getBlockHardness(mc.theWorld, currentPos);
+                            totalHardness += (hardness >= 0.0F) ? hardness : 9999.0;
+                        }
                     }
                 }
             }
-            if (!pos.isEmpty()) {
-                pos.sort(
-                        (blockPos, blockPos2) -> {
-                            int o = Float.compare(this.calcBlockStrength(blockPos2), this.calcBlockStrength(blockPos));
-                            return o != 0
-                                    ? o
-                                    : Double.compare(
-                                    blockPos.distanceSqToCenter(mc.thePlayer.posX, mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight(), mc.thePlayer.posZ),
-                                    blockPos2.distanceSqToCenter(mc.thePlayer.posX, mc.thePlayer.posY + (double) mc.thePlayer.getEyeHeight(), mc.thePlayer.posZ)
-                            );
-                        }
-                );
-                return pos.get(0);
+
+            List<BlockPos> pathBlocks = new ArrayList<>(blockingBlocks);
+            pathBlocks.sort(Comparator.comparingDouble(p -> p.distanceSqToCenter(playerX, playerY, playerZ)));
+            options.add(new PathOption(pathBlocks, totalHardness));
+        }
+
+        if (options.isEmpty()) return new ArrayList<>();
+        options.sort(Comparator.comparingDouble(PathOption::getCost));
+        return options.get(0).blocks;
+    }
+
+    private BlockPos getNextBlockInPath(BlockPos bedPosition) {
+        if (this.actualBedPos == null || !this.actualBedPos.equals(bedPosition)) {
+            this.actualBedPos = bedPosition;
+            this.plannedPath = findOptimalPath(bedPosition);
+            this.currentPathIndex = 0;
+        }
+
+        if (this.plannedPath.isEmpty()) {
+            this.plannedPath = findOptimalPath(bedPosition);
+            this.currentPathIndex = 0;
+        }
+
+        while (this.currentPathIndex < this.plannedPath.size()) {
+            BlockPos block = this.plannedPath.get(this.currentPathIndex);
+            if (!mc.theWorld.isAirBlock(block) && !isPassableBlock(block)) {
+                if (!PlayerUtil.canReach(block, this.range.getValue().doubleValue())) {
+                    this.plannedPath = findOptimalPath(bedPosition);
+                    this.currentPathIndex = 0;
+                    continue;
+                }
+                Block b = mc.theWorld.getBlockState(block).getBlock();
+                if (this.toolCheck.getValue() && !hasProperTool(b)) {
+                    this.currentPathIndex++;
+                    continue;
+                }
+                return block;
             }
+            this.currentPathIndex++;
         }
         return null;
+    }
+
+    private BlockPos validateBedPlacement(BlockPos bedPosition) {
+        return getNextBlockInPath(bedPosition);
     }
 
     private BlockPos findNearestBed() {
