@@ -13,6 +13,7 @@ import myau.mixin.IAccessorPlayerControllerMP;
 import myau.module.Module;
 import myau.property.properties.BooleanProperty;
 import myau.property.properties.FloatProperty;
+import myau.property.properties.IntProperty;
 import myau.property.properties.ModeProperty;
 import myau.property.properties.PercentProperty;
 import myau.util.*;
@@ -37,13 +38,13 @@ import net.minecraft.network.play.server.S08PacketPlayerPosLook;
 import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.network.play.server.S27PacketExplosion;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import org.lwjgl.opengl.GL11;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +55,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 
 public class BedNuker extends Module {
     private static final Minecraft mc = Minecraft.getMinecraft();
@@ -78,6 +80,8 @@ public class BedNuker extends Module {
     public final ModeProperty mode = new ModeProperty("mode", 0, new String[]{"LEGIT", "SWAP"});
     public final FloatProperty range = new FloatProperty("range", 4.5F, 3.0F, 6.0F);
     public final PercentProperty speed = new PercentProperty("speed", 0);
+    public final PercentProperty smoothing = new PercentProperty("smoothing", 60);
+    public final IntProperty angleStep = new IntProperty("angle-step", 90, 30, 180);
     public final BooleanProperty groundSpeed = new BooleanProperty("ground-spoof", false);
     public final ModeProperty ignoreVelocity = new ModeProperty("ignore-velocity", 0, new String[]{"NONE", "CANCEL", "DELAY"});
     public final BooleanProperty surroundings = new BooleanProperty("surroundings", true);
@@ -240,6 +244,29 @@ public class BedNuker extends Module {
         return BlockUtil.isReplaceable(block) || block instanceof BlockBed;
     }
 
+    private int getBedLayer(BlockPos pos, List<BlockPos> bedParts) {
+        int layer = Integer.MAX_VALUE;
+        for (BlockPos bedPart : bedParts) {
+            int x = Math.abs(pos.getX() - bedPart.getX());
+            int y = Math.abs(pos.getY() - bedPart.getY());
+            int z = Math.abs(pos.getZ() - bedPart.getZ());
+            layer = Math.min(layer, Math.max(x, Math.max(y, z)));
+        }
+        return layer == Integer.MAX_VALUE ? 0 : layer;
+    }
+
+    private boolean isValidSurroundingBlock(BlockPos pos, List<BlockPos> bedParts, double playerX, double playerY, double playerZ) {
+        return !bedParts.contains(pos)
+                && !isPassableBlock(pos)
+                && PlayerUtil.isBlockWithinReach(pos, playerX, playerY, playerZ, this.range.getValue().doubleValue());
+    }
+
+    private void addSurroundingBlock(Set<BlockPos> blocks, BlockPos pos, List<BlockPos> bedParts, double playerX, double playerY, double playerZ) {
+        if (this.isValidSurroundingBlock(pos, bedParts, playerX, playerY, playerZ)) {
+            blocks.add(pos);
+        }
+    }
+
     private List<BlockPos> findOptimalPath(BlockPos bedPosition) {
         IBlockState blockState = mc.theWorld.getBlockState(bedPosition);
         if (!(blockState.getBlock() instanceof BlockBed))
@@ -251,22 +278,12 @@ public class BedNuker extends Module {
 
         List<BlockPos> bedParts = Arrays.asList(bedPosition, otherPart);
 
-        double bedCenterX = (bedPosition.getX() + otherPart.getX()) / 2.0 + 0.5;
-        double bedCenterY = (bedPosition.getY() + otherPart.getY()) / 2.0 + 0.5;
-        double bedCenterZ = (bedPosition.getZ() + otherPart.getZ()) / 2.0 + 0.5;
-
         double playerX = mc.thePlayer.posX;
         double playerY = mc.thePlayer.posY + mc.thePlayer.getEyeHeight();
         double playerZ = mc.thePlayer.posZ;
 
         List<PathOption> options = new ArrayList<>();
-        List<BlockPos> targetPoints = new ArrayList<>();
-
-        for (BlockPos bedPart : bedParts) {
-            targetPoints.add(bedPart);
-            for (EnumFacing dir : EnumFacing.values())
-                targetPoints.add(bedPart.offset(dir));
-        }
+        List<BlockPos> targetPoints = new ArrayList<>(bedParts);
 
         for (BlockPos targetPoint : targetPoints) {
             Set<BlockPos> blockingBlocks = new HashSet<>();
@@ -298,27 +315,44 @@ public class BedNuker extends Module {
                 BlockPos currentPos = new BlockPos(cx, cy, cz);
                 if (!checked.contains(currentPos)) {
                     checked.add(currentPos);
-                    if (!bedParts.contains(currentPos) && !isPassableBlock(currentPos)
-                            && PlayerUtil.isBlockWithinReach(currentPos, playerX, playerY, playerZ, this.range.getValue().doubleValue())) {
-                        if (!blockingBlocks.contains(currentPos)) {
-                            blockingBlocks.add(currentPos);
-                            IBlockState state = mc.theWorld.getBlockState(currentPos);
-                            Block block = state.getBlock();
-                            float hardness = block.getBlockHardness(mc.theWorld, currentPos);
-                            totalHardness += (hardness >= 0.0F) ? hardness : 9999.0;
-                        }
+                    if (this.isValidSurroundingBlock(currentPos, bedParts, playerX, playerY, playerZ) && !blockingBlocks.contains(currentPos)) {
+                        blockingBlocks.add(currentPos);
                     }
                 }
             }
 
             List<BlockPos> pathBlocks = new ArrayList<>(blockingBlocks);
-            pathBlocks.sort(Comparator.comparingDouble(p -> p.distanceSqToCenter(playerX, playerY, playerZ)));
+            pathBlocks.sort((a, b) -> {
+                int layerCompare = Integer.compare(this.getBedLayer(b, bedParts), this.getBedLayer(a, bedParts));
+                if (layerCompare != 0) {
+                    return layerCompare;
+                }
+
+                int distanceCompare = Double.compare(
+                        a.distanceSqToCenter(playerX, playerY, playerZ),
+                        b.distanceSqToCenter(playerX, playerY, playerZ)
+                );
+                if (distanceCompare != 0) {
+                    return distanceCompare;
+                }
+
+                return Float.compare(this.calcBlockStrength(a), this.calcBlockStrength(b));
+            });
+
+            for (BlockPos pathBlock : pathBlocks) {
+                IBlockState state = mc.theWorld.getBlockState(pathBlock);
+                Block block = state.getBlock();
+                float hardness = block.getBlockHardness(mc.theWorld, pathBlock);
+                totalHardness += (hardness >= 0.0F) ? hardness : 9999.0;
+            }
+
             options.add(new PathOption(pathBlocks, totalHardness));
         }
 
         if (options.isEmpty()) return new ArrayList<>();
         options.sort(Comparator.comparingDouble(PathOption::getCost));
-        return options.get(0).blocks;
+        List<BlockPos> result = options.get(0).blocks;
+        return result;
     }
 
     private BlockPos getNextBlockInPath(BlockPos bedPosition) {
@@ -335,20 +369,23 @@ public class BedNuker extends Module {
 
         while (this.currentPathIndex < this.plannedPath.size()) {
             BlockPos block = this.plannedPath.get(this.currentPathIndex);
-            if (!mc.theWorld.isAirBlock(block) && !isPassableBlock(block)) {
-                if (!PlayerUtil.canReach(block, this.range.getValue().doubleValue())) {
-                    this.plannedPath = findOptimalPath(bedPosition);
-                    this.currentPathIndex = 0;
-                    continue;
-                }
-                Block b = mc.theWorld.getBlockState(block).getBlock();
-                if (this.toolCheck.getValue() && !hasProperTool(b)) {
-                    this.currentPathIndex++;
-                    continue;
-                }
-                return block;
+            if (mc.theWorld.isAirBlock(block) || isPassableBlock(block)) {
+                this.plannedPath = findOptimalPath(bedPosition);
+                this.currentPathIndex = 0;
+                if (this.plannedPath.isEmpty()) break;
+                continue;
             }
-            this.currentPathIndex++;
+            if (!PlayerUtil.canReach(block, this.range.getValue().doubleValue())) {
+                this.plannedPath = findOptimalPath(bedPosition);
+                this.currentPathIndex = 0;
+                continue;
+            }
+            Block b = mc.theWorld.getBlockState(block).getBlock();
+            if (this.toolCheck.getValue() && !hasProperTool(b)) {
+                this.currentPathIndex++;
+                continue;
+            }
+            return block;
         }
         return null;
     }
@@ -549,11 +586,18 @@ public class BedNuker extends Module {
         if (this.isEnabled() && event.getType() == EventType.PRE) {
             AutoBlockIn autoBlockIn = (AutoBlockIn) Myau.moduleManager.modules.get(AutoBlockIn.class);
             if(autoBlockIn.isEnabled()) return;
-            if (this.isReady()) {
-                double x = (double) this.targetBed.getX() + 0.5 - mc.thePlayer.posX;
-                double y = (double) this.targetBed.getY() + 0.5 - mc.thePlayer.posY - (double) mc.thePlayer.getEyeHeight();
-                double z = (double) this.targetBed.getZ() + 0.5 - mc.thePlayer.posZ;
-                float[] rotations = RotationUtil.getRotationsTo(x, y, z, event.getYaw(), event.getPitch());
+            if (this.isReady() && this.targetBed != null) {
+                AxisAlignedBB blockBox = new AxisAlignedBB(
+                        this.targetBed.getX(), this.targetBed.getY(), this.targetBed.getZ(),
+                        this.targetBed.getX() + 1, this.targetBed.getY() + 1, this.targetBed.getZ() + 1
+                );
+                float[] rotations = RotationUtil.getRotationsToBox(
+                        blockBox,
+                        event.getYaw(),
+                        event.getPitch(),
+                        (float) this.angleStep.getValue().intValue() + RandomUtil.nextFloat(-5.0F, 5.0F),
+                        (float) this.smoothing.getValue() / 100.0F
+                );
                 event.setRotation(rotations[0], rotations[1], 5);
                 event.setPervRotation(this.moveFix.getValue() != 0 ? rotations[0] : mc.thePlayer.rotationYaw, 5);
             }

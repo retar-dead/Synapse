@@ -62,13 +62,16 @@ public class GuiAccountManager extends GuiScreen {
         ));
 
         buttonList.add(deleteButton = new GuiButton(
-                2, width / 2 - 150, height - 28, 95, 20, "Delete"
-        ));
-        buttonList.add(cancelButton = new GuiButton(
-                3, width / 2 + 50, height - 28, 95, 20, "Cancel"
+                2, width / 2 - 154, height - 28, 73, 20, "Delete"
         ));
         buttonList.add(new GuiButton(
-                5, width / 2 - 50, height - 28, 95, 20, "Add Token"
+                6, width / 2 - 77, height - 28, 73, 20, "Offline"
+        ));
+        buttonList.add(new GuiButton(
+                5, width / 2, height - 28, 73, 20, "Add Token"
+        ));
+        buttonList.add(cancelButton = new GuiButton(
+                3, width / 2 + 77, height - 28, 73, 20, "Cancel"
         ));
 
         guiAccountList = new GuiAccountList(mc);
@@ -296,6 +299,10 @@ public class GuiAccountManager extends GuiScreen {
                 break;
                 case 5:{
                     mc.displayGuiScreen(new GuiAddToken(this));
+                }
+                break;
+                case 6:{
+                    mc.displayGuiScreen(new GuiOfflineLogin(this));
                 }
                 break;
                 default: {
